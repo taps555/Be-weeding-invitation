@@ -43,6 +43,8 @@ func (c *AllController) AddData(w http.ResponseWriter, r *http.Request) {
     fmt.Println("id :", user.ID)
     fmt.Println("Nama :", user.Name)
     
+    invitationLink := fmt.Sprintf("http://localhost:5173/undangan/%s",  user.Name)
+    user.Link = invitationLink
    
     // Menyimpan data user terlebih dahulu ke database
     if err := c.service.AddData(&user); err != nil {
@@ -50,8 +52,6 @@ func (c *AllController) AddData(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    invitationLink := fmt.Sprintf("http://localhost:5173/undangan/%s",  user.Name)
-    user.Link = invitationLink
 
 
     fmt.Println("id :", user.ID)
