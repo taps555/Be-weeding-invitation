@@ -35,7 +35,7 @@ func main() {
 
 	// Setup CORS
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins:   []string{"https://wedding-two-opal.vercel.app/"},
+		AllowedOrigins:   []string{"https://wedding-two-opal.vercel.app"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Content-Type"},
 		AllowCredentials: true,
