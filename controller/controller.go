@@ -43,7 +43,7 @@ func (c *AllController) AddData(w http.ResponseWriter, r *http.Request) {
     fmt.Println("id :", user.ID)
     fmt.Println("Nama :", user.Name)
     
-    invitationLink := fmt.Sprintf("http://localhost:3000/undangan/%s", user.Name)
+    invitationLink := fmt.Sprintf("http://localhost:5173/undangan/%s", user.Name)
 
     user.Link = invitationLink
    
