@@ -30,6 +30,7 @@ func main() {
 	r.HandleFunc("/admin", allController.AddData).Methods("POST")
 	r.HandleFunc("/admin/view", allController.GetAll).Methods("GET")
 	r.HandleFunc("/undangan/{name}", allController.GetInvitationLink).Methods("GET") // PERBAIKI DI SINI
+	r.HandleFunc("/undangan/{name}/myWedding", allController.GetInvitationLink).Methods("GET") // PERBAIKI DI SINI
 	r.HandleFunc("/users/{id}", allController.EditData).Methods("PUT")
 	r.HandleFunc("/users/{id}", allController.DeleteData).Methods("DELETE")
 
