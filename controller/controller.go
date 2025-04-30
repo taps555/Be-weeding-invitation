@@ -29,48 +29,47 @@ func (c *AllController) GetAll(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(products)
 }
 
-func (c *AllController) AddData(w http.ResponseWriter, r *http.Request) {
-    if r.Method != http.MethodPost {
-        http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-        return
-    }
+    func (c *AllController) AddData(w http.ResponseWriter, r *http.Request) {
+        if r.Method != http.MethodPost {
+            http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+            return
+        }
 
-    var user models.User
-    if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-        http.Error(w, "Failed to decode JSON: "+err.Error(), http.StatusBadRequest)
-        return
-    }
+        var user models.User
+        if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+            http.Error(w, "Failed to decode JSON: "+err.Error(), http.StatusBadRequest)
+            return
+        }
 
-    fmt.Println("id :", user.ID)
-    fmt.Println("Nama :", user.Name)
+        fmt.Println("id :", user.ID)
+        fmt.Println("Nama :", user.Name)
+        
+        endCodename := url.QueryEscape(user.Name)
+        invitationLink := fmt.Sprintf("https://wedding-two-opal.vercel.app/undangan/%s/myWedding", endCodename)
+
+        user.Link = invitationLink
     
-    endCodename := url.QueryEscape(user.Name)
-    invitationLink := fmt.Sprintf("http://localhost:5173/undangan/%s", endCodename)
+        // Menyimpan data user terlebih dahulu ke database
+        if err := c.service.AddData(&user); err != nil {
+            http.Error(w, "Failed to add data: "+err.Error(), http.StatusBadRequest)
+            return
+        }
 
-    
-    user.Link = invitationLink
-   
-    // Menyimpan data user terlebih dahulu ke database
-    if err := c.service.AddData(&user); err != nil {
-        http.Error(w, "Failed to add data: "+err.Error(), http.StatusBadRequest)
-        return
+
+        fmt.Println("id :", user.ID)
+        // Setelah data berhasil disimpan, buat link undangan dengan ID yang sudah terisi
+        
+
+        // Kirim response sukses
+        w.WriteHeader(http.StatusCreated)
+        response := map[string]interface{}{
+            "message":        "Produk berhasil ditambahkan!",
+            "invitationLink": invitationLink,
+            "namaUser": user.Name,
+            "user":           user,
+        }
+        json.NewEncoder(w).Encode(response)
     }
-
-
-    fmt.Println("id :", user.ID)
-    // Setelah data berhasil disimpan, buat link undangan dengan ID yang sudah terisi
-    
-
-    // Kirim response sukses
-    w.WriteHeader(http.StatusCreated)
-    response := map[string]interface{}{
-        "message":        "Produk berhasil ditambahkan!",
-        "invitationLink": invitationLink,
-        "namaUser": user.Name,
-        "user":           user,
-    }
-    json.NewEncoder(w).Encode(response)
-}
 
 
 
