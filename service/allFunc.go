@@ -27,7 +27,7 @@ func (s *AllService) GetById(user *models.User, id string) error {
 } 
 
 func (s *AllService) GetByName(user *models.User, name string) error {
-    // Melakukan pencarian berdasarkan nama, bukan ID
+
     err := s.repo.GetByName(user, name)
     if err != nil {
         return errors.New("user not found")

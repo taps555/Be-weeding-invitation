@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 	"wedding/models"
 	"wedding/service"
@@ -43,7 +44,8 @@ func (c *AllController) AddData(w http.ResponseWriter, r *http.Request) {
     fmt.Println("id :", user.ID)
     fmt.Println("Nama :", user.Name)
     
-    invitationLink := fmt.Sprintf("http://localhost:5173/undangan/%s", user.Name)
+    endCodename := url.QueryEscape(user.Name)
+    invitationLink := fmt.Sprintf("https://curdgolangbasic-production.up.railway.app/undangan/%s", endCodename)
 
     user.Link = invitationLink
    
@@ -52,7 +54,6 @@ func (c *AllController) AddData(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Failed to add data: "+err.Error(), http.StatusBadRequest)
         return
     }
-
 
 
     fmt.Println("id :", user.ID)
