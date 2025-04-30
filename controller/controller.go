@@ -47,6 +47,7 @@ func (c *AllController) AddData(w http.ResponseWriter, r *http.Request) {
     endCodename := url.QueryEscape(user.Name)
     invitationLink := fmt.Sprintf("http://localhost:5173/undangan/%s", endCodename)
 
+    
     user.Link = invitationLink
    
     // Menyimpan data user terlebih dahulu ke database
