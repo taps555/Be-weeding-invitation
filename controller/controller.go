@@ -45,7 +45,7 @@ func (c *AllController) AddData(w http.ResponseWriter, r *http.Request) {
     fmt.Println("Nama :", user.Name)
     
     endCodename := url.QueryEscape(user.Name)
-    invitationLink := fmt.Sprintf("https://curdgolangbasic-production.up.railway.app/undangan/%s", endCodename)
+    invitationLink := fmt.Sprintf("http://localhost:5173/undangan/%s", endCodename)
 
     user.Link = invitationLink
    
