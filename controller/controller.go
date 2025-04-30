@@ -45,7 +45,7 @@ func (c *AllController) GetAll(w http.ResponseWriter, r *http.Request) {
         fmt.Println("Nama :", user.Name)
         
         endCodename := url.QueryEscape(user.Name)
-        invitationLink := fmt.Sprintf("https://wedding-two-opal.vercel.app/undangan/%s", endCodename)
+        invitationLink := fmt.Sprintf("https://married-templte1.vercel.app/undangan/%s", endCodename)
 
 
         
