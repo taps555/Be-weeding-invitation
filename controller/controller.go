@@ -29,53 +29,62 @@ func (c *AllController) GetAll(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(products)
 }
 
-    func (c *AllController) AddData(w http.ResponseWriter, r *http.Request) {
-        if r.Method != http.MethodPost {
-            http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-            return
-        }
-
-        var user models.User
-        if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-            http.Error(w, "Failed to decode JSON: "+err.Error(), http.StatusBadRequest)
-            return
-        }
-
-        fmt.Println("id :", user.ID)
-        fmt.Println("Nama :", user.Name)
-        
-        endCodename := url.QueryEscape(user.Name)
-        invitationLink := fmt.Sprintf("https://wedding-two-opal.vercel.app/undangan/%s/myWedding", endCodename)
-
-        user.Link = invitationLink
-    
-        // Menyimpan data user terlebih dahulu ke database
-        if err := c.service.AddData(&user); err != nil {
-            http.Error(w, "Failed to add data: "+err.Error(), http.StatusBadRequest)
-            return
-        }
-
-
-        fmt.Println("id :", user.ID)
-        // Setelah data berhasil disimpan, buat link undangan dengan ID yang sudah terisi
-        
-
-        // Kirim response sukses
-        w.WriteHeader(http.StatusCreated)
-        response := map[string]interface{}{
-            "message":        "Produk berhasil ditambahkan!",
-            "invitationLink": invitationLink,
-            "namaUser": user.Name,
-            "user":           user,
-        }
-        json.NewEncoder(w).Encode(response)
+func (c *AllController) AddData(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodPost {
+        http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+        return
     }
+
+    // Ambil nama dari URL path
+    vars := mux.Vars(r)
+    name := vars["name"]
+
+    // Dekode data user dari request body
+    var user models.User
+    if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+        http.Error(w, "Failed to decode JSON: "+err.Error(), http.StatusBadRequest)
+        return
+    }
+
+    // Validasi nama
+    if name == "" {
+        http.Error(w, "Nama tidak ditemukan", http.StatusBadRequest)
+        return
+    }
+
+    // Generate invitation link berdasarkan nama
+    endCodename := url.QueryEscape(name)
+    invitationLink := fmt.Sprintf("https://wedding-two-opal.vercel.app/undangan/%s/myWedding", endCodename)
+
+    // Menyimpan data user dan link undangan
+    user.Link = invitationLink
+
+    // Simpan data ke database
+    if err := c.service.AddData(&user); err != nil {
+        http.Error(w, "Failed to add data: "+err.Error(), http.StatusBadRequest)
+        return
+    }
+
+    // Kirim response sukses
+    w.WriteHeader(http.StatusCreated)
+    response := map[string]interface{}{
+        "message":        "Pengantin berhasil ditambahkan!",
+        "invitationLink": invitationLink,
+        "namaUser":       name,
+        "user":           user,
+    }
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(response)
+}
+
 
 
 
 // Mengambil ID dari URL menggunakan mux.Vars
 func (c *AllController) GetInvitationLink(w http.ResponseWriter, r *http.Request) {
-    name := mux.Vars(r)["name"] // Ambil nama dari URL
+    // Ambil nama dari parameter URL
+    vars := mux.Vars(r)
+    name := vars["name"]
 
     // Validasi apakah nama tidak kosong
     if name == "" {
@@ -92,12 +101,16 @@ func (c *AllController) GetInvitationLink(w http.ResponseWriter, r *http.Request
         return
     }
 
+    // Menghasilkan link undangan
+    invitationLink := fmt.Sprintf("https://wedding-two-opal.vercel.app/undangan/%s/myWedding", url.QueryEscape(user.Name))
+
     // Mengembalikan response JSON dengan link undangan dan nama user
     response := map[string]interface{}{
         "message":        "Undangan ditemukan",
-        "namaUser":       user.Name,  // Menggunakan nama yang diambil dari database
+        "invitationLink": invitationLink,
+        "namaUser":       user.Name,
     }
-    
+
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusOK)
     json.NewEncoder(w).Encode(response)
