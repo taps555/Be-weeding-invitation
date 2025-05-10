@@ -28,15 +28,19 @@ func main() {
 
 	// Routes
 	r.HandleFunc("/admin", allController.AddData).Methods("POST")
+	
 	r.HandleFunc("/admin/view", allController.GetAll).Methods("GET")
+	// r.HandleFunc("/admin", allController.GetAll).Methods("GET")
 	r.HandleFunc("/undangan/{name}", allController.GetInvitationLink).Methods("POST") // PERBAIKI DI SINI
+	r.HandleFunc("/undangan/{name}", allController.GetInvitationLink).Methods("GET") // PERBAIKI DI SINI
+	
 	r.HandleFunc("/undangan/{name}/myWedding", allController.GetInvitationLink).Methods("GET") // PERBAIKI DI SINI
 	r.HandleFunc("/users/{id}", allController.EditData).Methods("PUT")
 	r.HandleFunc("/users/{id}", allController.DeleteData).Methods("DELETE")
 
 	// Setup CORS
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins:   []string{"https://married-templte1.vercel.app", "http://localhost:5173"},
+		AllowedOrigins:   []string{"http://localhost:8080", "http://localhost:3000"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Content-Type"},
 		AllowCredentials: true,

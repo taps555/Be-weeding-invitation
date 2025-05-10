@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
 	"strconv"
 	"wedding/models"
 	"wedding/service"
@@ -29,49 +28,48 @@ func (c *AllController) GetAll(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(products)
 }
 
-    func (c *AllController) AddData(w http.ResponseWriter, r *http.Request) {
-        if r.Method != http.MethodPost {
-            http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-            return
-        }
-
-        var user models.User
-        if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-            http.Error(w, "Failed to decode JSON: "+err.Error(), http.StatusBadRequest)
-            return
-        }
-
-        fmt.Println("id :", user.ID)
-        fmt.Println("Nama :", user.Name)
-        
-        endCodename := url.QueryEscape(user.Name)
-        invitationLink := fmt.Sprintf("https://married-templte1.vercel.app/undangan/%s", endCodename)
-
-
-        
-        user.Link = invitationLink
-    
-        // Menyimpan data user terlebih dahulu ke database
-        if err := c.service.AddData(&user); err != nil {
-            http.Error(w, "Failed to add data: "+err.Error(), http.StatusBadRequest)
-            return
-        }
-
-
-        fmt.Println("id :", user.ID)
-        // Setelah data berhasil disimpan, buat link undangan dengan ID yang sudah terisi
-        
-
-        // Kirim response sukses
-        w.WriteHeader(http.StatusCreated)
-        response := map[string]interface{}{
-            "message":        "Produk berhasil ditambahkan!",
-            "invitationLink": invitationLink,
-            "namaUser": user.Name,
-            "user":           user,
-        }
-        json.NewEncoder(w).Encode(response)
+func (c *AllController) AddData(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodPost {
+        http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+        return
     }
+
+    var user models.User
+    if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+        http.Error(w, "Failed to decode JSON: "+err.Error(), http.StatusBadRequest)
+        return
+    }
+
+    fmt.Println("id :", user.ID)
+    fmt.Println("Nama :", user.Name)
+    
+    // Membuat link undangan berdasarkan nama user
+    invitationLink := fmt.Sprintf("http://localhost:3000/undangan/%s", user.Name)
+
+    fmt.Println("invitationLink :", invitationLink)
+
+    // Pastikan kolom link pada objek user diisi dengan invitationLink
+    user.Link = invitationLink // Menyimpan invitationLink ke dalam user
+
+    // Menyimpan data user terlebih dahulu ke database
+    if err := c.service.AddData(&user); err != nil {
+        http.Error(w, "Failed to add data: "+err.Error(), http.StatusBadRequest)
+        return
+    }
+
+    fmt.Println("id :", user.ID)
+    
+    // Kirim response sukses dengan link undangan
+    w.WriteHeader(http.StatusCreated)
+    response := map[string]interface{}{
+        "message":        "Produk berhasil ditambahkan!",
+        "invitationLink": invitationLink,
+        "namaUser":       user.Name,
+        "user":           user,
+    }
+    json.NewEncoder(w).Encode(response)
+}
+
 
 
 
