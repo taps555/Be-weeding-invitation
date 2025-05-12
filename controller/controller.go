@@ -44,7 +44,7 @@ func (c *AllController) AddData(w http.ResponseWriter, r *http.Request) {
     fmt.Println("Nama :", user.Name)
     
     // Membuat link undangan berdasarkan nama user
-    invitationLink := fmt.Sprintf("https://tapss-project.vercel.app/%s", user.Name)
+    invitationLink := fmt.Sprintf("https://tapss-project.vercel.app/undangan/%s", user.Name)
 
     fmt.Println("invitationLink :", invitationLink)
 
