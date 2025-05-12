@@ -40,7 +40,7 @@ func main() {
 
 	// Setup CORS
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:8080", "http://localhost:3000"},
+		AllowedOrigins:   []string{"https://be-weeding-invitation-production.up.railway.app", "https://tapss-project.vercel.app"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Content-Type"},
 		AllowCredentials: true,
